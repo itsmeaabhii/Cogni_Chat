@@ -20,7 +20,7 @@ index_name = settings.PINECONE_INDEX_NAME
 index = pc.Index(index_name)
 
 embeddings_model = GoogleGenerativeAIEmbeddings(
-    model="models/embedding-001", google_api_key=settings.GOOGLE_API_KEY
+    model="embedding-001", google_api_key=settings.GOOGLE_API_KEY
 )
 
 text_splitter = RecursiveCharacterTextSplitter(
