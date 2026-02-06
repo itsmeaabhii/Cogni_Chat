@@ -9,16 +9,30 @@
     --input-bg-color: rgba(0, 0, 0, 0.2);
     --success-color: #4CAF50;
     --error-color: #F44336;
+    --bg-gradient-start: #360033;
+    --bg-gradient-end: #0b8793;
+}
+
+/* Light mode variables */
+:root.light-mode {
+    --text-color: #2c3e50;
+    --subtle-text-color: #555;
+    --card-bg-color: rgba(255, 255, 255, 0.9);
+    --card-border-color: rgba(0, 0, 0, 0.1);
+    --input-bg-color: rgba(255, 255, 255, 0.8);
+    --bg-gradient-start: #e0e7ff;
+    --bg-gradient-end: #b8e6f1;
 }
 
 body {
     font-family: 'Poppins', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    background: linear-gradient(135deg, #360033, #0b8793);
+    background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
     color: var(--text-color);
     line-height: 1.6;
     margin: 0;
     padding: 2rem;
     min-height: 100vh;
+    transition: background 0.3s ease, color 0.3s ease;
 }
 
 /* --- Main Layout & Header --- */
@@ -32,6 +46,21 @@ header {
     margin-bottom: 3rem;
 }
 
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+    .header-content {
+        flex-direction: column;
+        gap: 1rem;
+    }
+}
+
 header h1 {
     font-size: 3rem;
     font-weight: 600;
@@ -41,6 +70,32 @@ header h1 {
 header p {
     font-size: 1.2rem;
     color: var(--subtle-text-color);
+}
+
+/* Theme toggle button */
+.theme-toggle {
+    background: var(--card-bg-color);
+    border: 1px solid var(--card-border-color);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.theme-toggle:hover {
+    transform: rotate(20deg) scale(1.1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.theme-toggle svg {
+    transition: opacity 0.3s ease;
 }
 
 .main-content {
@@ -110,6 +165,11 @@ input[type="text"], textarea {
 
 input[type="text"]::placeholder, textarea::placeholder {
     color: rgba(255, 255, 255, 0.5);
+}
+
+:root.light-mode input[type="text"]::placeholder,
+:root.light-mode textarea::placeholder {
+    color: rgba(0, 0, 0, 0.4);
 }
 
 input[type="text"]:focus, textarea:focus {
