@@ -40,8 +40,17 @@
                         <input type="file" id="file-input" accept=".txt,.md,.doc,.docx,.pdf" style="display: none;">
                         <span id="file-name" class="file-name">No file selected</span>
                     </div>
-                    <textarea id="text-input" rows="8" placeholder="Paste your document text here or upload a file above..."></textarea>
-                    <button id="ingest-button">Ingest Document</button>
+                    <div class="textarea-wrapper">
+                        <textarea id="text-input" rows="8" placeholder="Paste your document text here or upload a file above..."></textarea>
+                        <div class="counter" id="text-counter">0 words | 0 characters</div>
+                    </div>
+                    <div class="button-group">
+                        <button id="ingest-button">Ingest Document</button>
+                        <button id="clear-ingest-button" class="btn-secondary">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                            Clear
+                        </button>
+                    </div>
                 </div>
 
                 <div class="card" id="query-card">
@@ -51,7 +60,13 @@
                     </h2>
                     <p>Query the knowledge base with your question.</p>
                     <input type="text" id="query-input" placeholder="e.g., What binds the Solar System together?">
-                    <button id="query-button">Get Answer</button>
+                    <div class="button-group">
+                        <button id="query-button">Get Answer</button>
+                        <button id="clear-query-button" class="btn-secondary">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                            Clear
+                        </button>
+                    </div>
                 </div>
             </div>
 

@@ -10,6 +10,9 @@ const textInput = document.getElementById('text-input');
 const queryInput = document.getElementById('query-input');
 const fileInput = document.getElementById('file-input');
 const fileNameDisplay = document.getElementById('file-name');
+const clearIngestButton = document.getElementById('clear-ingest-button');
+const clearQueryButton = document.getElementById('clear-query-button');
+const textCounter = document.getElementById('text-counter');
 
 const resultsCard = document.getElementById('results-card');
 const loadingSpinner = document.getElementById('loading-spinner');
@@ -26,6 +29,14 @@ const toast = document.getElementById('toast');
 // --- Attach functions to our button clicks ---
 ingestButton.addEventListener('click', handleIngest);
 queryButton.addEventListener('click', handleQuery);
+clearIngestButton.addEventListener('click', clearIngestForm);
+clearQueryButton.addEventListener('click', clearQueryForm);
+
+// --- Add character/word counter ---
+textInput.addEventListener('input', updateTextCounter);
+
+// Initialize counter
+updateTextCounter();
 
 // --- Add keyboard shortcuts ---
 // Ctrl+Enter (or Cmd+Enter on Mac) to submit in the ingest textarea
@@ -234,5 +245,36 @@ function showToast(message, type = 'success') {
     setTimeout(() => {
         toast.classList.remove('show');
     }, 3000);
+}
+
+/**
+ * Clears the ingest form
+ */
+function clearIngestForm() {
+    sourceNameInput.value = '';
+    textInput.value = '';
+    fileInput.value = '';
+    fileNameDisplay.textContent = 'No file selected';
+    updateTextCounter();
+    showToast('Form cleared', 'success');
+}
+
+/**
+ * Clears the query form and results
+ */
+function clearQueryForm() {
+    queryInput.value = '';
+    resetResultsUI();
+    showToast('Query cleared', 'success');
+}
+
+/**
+ * Updates the word and character counter for textarea
+ */
+function updateTextCounter() {
+    const text = textInput.value;
+    const charCount = text.length;
+    const wordCount = text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
+    textCounter.textContent = `${wordCount} words | ${charCount} characters`;
 }
 
