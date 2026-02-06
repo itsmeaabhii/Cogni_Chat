@@ -25,6 +25,23 @@ const toast = document.getElementById('toast');
 ingestButton.addEventListener('click', handleIngest);
 queryButton.addEventListener('click', handleQuery);
 
+// --- Add keyboard shortcuts ---
+// Ctrl+Enter (or Cmd+Enter on Mac) to submit in the ingest textarea
+textInput.addEventListener('keydown', (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+        e.preventDefault();
+        handleIngest();
+    }
+});
+
+// Ctrl+Enter (or Cmd+Enter on Mac) or just Enter to submit query
+queryInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        handleQuery();
+    }
+});
+
 
 // --- Main Handler Functions ---
 
