@@ -7,6 +7,7 @@ uvicorn[standard]
 # AI and Data processing libraries
 pinecone
 langchain
+langchain-text-splitters
 google-generativeai
 langchain-google-genai
 cohere

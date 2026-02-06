@@ -1,7 +1,7 @@
 import os
 import google.generativeai as genai
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 from pinecone import Pinecone
 import cohere
 
@@ -20,7 +20,7 @@ index_name = settings.PINECONE_INDEX_NAME
 index = pc.Index(index_name)
 
 embeddings_model = GoogleGenerativeAIEmbeddings(
-    model="models/text-embedding-004", google_api_key=settings.GOOGLE_API_KEY
+    model="models/embedding-001", google_api_key=settings.GOOGLE_API_KEY
 )
 
 text_splitter = RecursiveCharacterTextSplitter(
