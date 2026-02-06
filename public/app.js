@@ -8,6 +8,8 @@ const queryButton = document.getElementById('query-button');
 const sourceNameInput = document.getElementById('source-name');
 const textInput = document.getElementById('text-input');
 const queryInput = document.getElementById('query-input');
+const fileInput = document.getElementById('file-input');
+const fileNameDisplay = document.getElementById('file-name');
 
 const resultsCard = document.getElementById('results-card');
 const loadingSpinner = document.getElementById('loading-spinner');
@@ -41,6 +43,44 @@ queryInput.addEventListener('keydown', (e) => {
         handleQuery();
     }
 });
+
+// --- Handle file upload ---
+fileInput.addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if (!file) {
+        fileNameDisplay.textContent = 'No file selected';
+        return;
+    }
+    
+    fileNameDisplay.textContent = file.name;
+    
+    // Auto-fill source name if empty
+    if (!sourceNameInput.value.trim()) {
+        const nameWithoutExt = file.name.replace(/\.[^/.]+$/, '');
+        sourceNameInput.value = nameWithoutExt;
+    }
+    
+    // Read file content
+    try {
+        const text = await readFileContent(file);
+        textInput.value = text;
+        showToast('File loaded successfully!', 'success');
+    } catch (error) {
+        showToast('Error reading file: ' + error.message, 'error');
+    }
+});
+
+/**
+ * Reads text content from a file
+ */
+function readFileContent(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (e) => resolve(e.target.result);
+        reader.onerror = (e) => reject(new Error('Failed to read file'));
+        reader.readAsText(file);
+    });
+}
 
 
 // --- Main Handler Functions ---

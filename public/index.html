@@ -32,7 +32,15 @@
                     </h2>
                     <p>Provide a document for the AI to learn from.</p>
                     <input type="text" id="source-name" placeholder="Document Name (e.g., 'solar-system')">
-                    <textarea id="text-input" rows="8" placeholder="Paste your document text here..."></textarea>
+                    <div class="file-upload-section">
+                        <label for="file-input" class="file-upload-label">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg>
+                            Choose File
+                        </label>
+                        <input type="file" id="file-input" accept=".txt,.md,.doc,.docx,.pdf" style="display: none;">
+                        <span id="file-name" class="file-name">No file selected</span>
+                    </div>
+                    <textarea id="text-input" rows="8" placeholder="Paste your document text here or upload a file above..."></textarea>
                     <button id="ingest-button">Ingest Document</button>
                 </div>
 
