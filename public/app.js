@@ -274,39 +274,42 @@ function clearQueryForm() {
 }
 
 /**
- * Updates the word and character counter for textarea
+ * Updates the word counter for textarea (premium design shows only words)
  */
 function updateTextCounter() {
     const text = textInput.value;
-    const charCount = text.length;
     const wordCount = text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
-    textCounter.textContent = `${wordCount} words | ${charCount} characters`;
+    textCounter.textContent = `${wordCount} words`;
 }
 
 /**
- * Initialize theme from localStorage
+ * Initialize theme from localStorage (premium design uses data-theme attribute)
  */
 function initializeTheme() {
-    const savedTheme = localStorage.getItem('theme') || 'dark';
-    if (savedTheme === 'light') {
-        document.documentElement.classList.add('light-mode');
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    
+    if (savedTheme === 'dark') {
         sunIcon.classList.add('hidden');
         moonIcon.classList.remove('hidden');
     }
 }
 
 /**
- * Toggle between light and dark mode
+ * Toggle between light and dark mode (premium design uses data-theme attribute)
  */
 function toggleTheme() {
-    const isLight = document.documentElement.classList.toggle('light-mode');
+    const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+    
+    document.documentElement.setAttribute('data-theme', newTheme);
     
     // Toggle icons
     sunIcon.classList.toggle('hidden');
     moonIcon.classList.toggle('hidden');
     
     // Save preference
-    localStorage.setItem('theme', isLight ? 'light' : 'dark');
-    showToast(`${isLight ? 'Light' : 'Dark'} mode activated`, 'success');
+    localStorage.setItem('theme', newTheme);
+    showToast(`${newTheme.charAt(0).toUpperCase() + newTheme.slice(1)} mode activated`, 'success');
 }
 
