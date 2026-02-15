@@ -1,5 +1,7 @@
 // --- Set up the connection to our backend API ---
 const API_URL = "http://localhost:8000";
+const MAX_TEXT_LENGTH = 50000; // Character limit for text input
+const MAX_RETRIES = 2; // Number of retries for failed API requests
 
 // --- Get references to all the HTML elements ---
 const ingestButton = document.getElementById('ingest-button');
@@ -25,6 +27,7 @@ const answerContainer = document.getElementById('answer-container');
 const answerText = document.getElementById('answer-text');
 const sourcesContainer = document.getElementById('sources-container');
 const sourcesList = document.getElementById('sources-list');
+const copyButton = document.getElementById('copy-answer-button');
 
 const toast = document.getElementById('toast');
 
@@ -35,9 +38,13 @@ queryButton.addEventListener('click', handleQuery);
 clearIngestButton.addEventListener('click', clearIngestForm);
 clearQueryButton.addEventListener('click', clearQueryForm);
 themeToggle.addEventListener('click', toggleTheme);
+if (copyButton) copyButton.addEventListener('click', copyAnswerToClipboard);
 
-// --- Add character/word counter ---
-textInput.addEventListener('input', updateTextCounter);
+// --- Add character/word counter and validation ---
+textInput.addEventListener('input', () => {
+    updateTextCounter();
+    validateTextLength();
+});
 
 // Initialize counter and theme
 updateTextCounter();
@@ -113,20 +120,20 @@ async function handleIngest() {
         return;
     }
 
+    if (text.length > MAX_TEXT_LENGTH) {
+        showToast(`Text exceeds maximum length of ${MAX_TEXT_LENGTH} characters.`, 'error');
+        return;
+    }
+
     resetResultsUI();
     setLoadingState(true);
 
     try {
-        const response = await fetch(`${API_URL}/ingest`, {
+        const result = await fetchWithRetry(`${API_URL}/ingest`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ source_name: sourceName, text: text })
         });
-
-        const result = await response.json();
-        if (!response.ok) {
-            throw new Error(result.detail || 'Failed to ingest data.');
-        }
         
         showToast(result.message, 'success');
         // The lines that cleared the inputs have been removed.
@@ -154,16 +161,11 @@ async function handleQuery() {
 
     try {
         const startTime = Date.now(); // Start timer
-        const response = await fetch(`${API_URL}/query`, {
+        const result = await fetchWithRetry(`${API_URL}/query`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ query: query })
         });
-        
-        const result = await response.json();
-        if (!response.ok) {
-            throw new Error(result.detail || 'Failed to get an answer.');
-        }
 
         const endTime = Date.now(); // End timer
         const duration = ((endTime - startTime) / 1000).toFixed(2); // Calculate duration in seconds
@@ -279,7 +281,75 @@ function clearQueryForm() {
 function updateTextCounter() {
     const text = textInput.value;
     const wordCount = text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
-    textCounter.textContent = `${wordCount} words`;
+    const charCount = text.length;
+    textCounter.textContent = `${wordCount} words · ${charCount}/${MAX_TEXT_LENGTH} characters`;
+}
+
+/**
+ * Validates text length and shows warning if exceeding limit
+ */
+function validateTextLength() {
+    const text = textInput.value;
+    if (text.length > MAX_TEXT_LENGTH) {
+        textCounter.style.color = 'var(--error-500, #ef4444)';
+        showToast(`Text exceeds ${MAX_TEXT_LENGTH} character limit`, 'error');
+    } else if (text.length > MAX_TEXT_LENGTH * 0.9) {
+        textCounter.style.color = 'var(--warning-500, #f59e0b)';
+    } else {
+        textCounter.style.color = '';
+    }
+}
+
+/**
+ * Fetch with automatic retry mechanism for better reliability
+ */
+async function fetchWithRetry(url, options, retries = MAX_RETRIES) {
+    for (let i = 0; i <= retries; i++) {
+        try {
+            const response = await fetch(url, options);
+            const result = await response.json();
+            
+            if (!response.ok) {
+                throw new Error(result.detail || `Request failed with status ${response.status}`);
+            }
+            
+            return result;
+        } catch (error) {
+            if (i === retries) {
+                throw error;
+            }
+            // Wait before retry (exponential backoff)
+            await new Promise(resolve => setTimeout(resolve, Math.pow(2, i) * 1000));
+            console.log(`Retrying request... Attempt ${i + 2}/${retries + 1}`);
+        }
+    }
+}
+
+/**
+ * Copies the answer text to clipboard
+ */
+async function copyAnswerToClipboard() {
+    const answerContent = answerText.textContent.replace(/\(Answer generated in .* seconds\)/, '').trim();
+    
+    if (!answerContent) {
+        showToast('No answer to copy', 'error');
+        return;
+    }
+    
+    try {
+        await navigator.clipboard.writeText(answerContent);
+        showToast('Answer copied to clipboard!', 'success');
+        
+        // Animate the copy button
+        if (copyButton) {
+            copyButton.textContent = 'Copied!';
+            setTimeout(() => {
+                copyButton.textContent = 'Copy Answer';
+            }, 2000);
+        }
+    } catch (error) {
+        showToast('Failed to copy to clipboard', 'error');
+    }
 }
 
 /**
